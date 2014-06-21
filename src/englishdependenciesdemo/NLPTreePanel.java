@@ -38,9 +38,11 @@ public class NLPTreePanel extends javax.swing.JPanel {
         try {
             treeString = aTreeString;
             Tree tree = (new PennTreeReader(new StringReader(treeString), new LabeledScoredTreeFactory(new StringLabelFactory()))).readTree();
-            treeJPanel.setTree(tree);               
+            treeJPanel.setTree(tree);   
+            System.out.println("Set tree: " + aTreeString);
             repaint();
         } catch (Exception e) {
+            System.err.println("Error to set tree string : " + e.getMessage());
             return;
         }
         

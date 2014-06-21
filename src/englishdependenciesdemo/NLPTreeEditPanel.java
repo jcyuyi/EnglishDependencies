@@ -37,6 +37,7 @@ public class NLPTreeEditPanel extends javax.swing.JPanel {
     private JButton btnDiscardChanges;
     private JButton btnApply;
     
+    private MainFrame parentFrame;
     //======================= public methods ==============================
      
     /**
@@ -48,6 +49,9 @@ public class NLPTreeEditPanel extends javax.swing.JPanel {
          init();
          setTreeString("");
          
+    }
+    public void setParentFrame(MainFrame f) {
+        parentFrame = f;
     }
     public void setTitle(String title)
     {
@@ -244,8 +248,25 @@ public class NLPTreeEditPanel extends javax.swing.JPanel {
      
      private void btnApplyActionPerformed(ActionEvent evt) {
          //Gen tree String 
+         System.out.println(getTreeString());
+         if (parentFrame != null) {
+             parentFrame.setWorkingEntryTreeString(getTreeString());
+         }
      }
      
+     private String getTreeString() {
+         return getTreeText(treeModel, treeModel.getRoot(), "");
+     }
+     
+    private static String getTreeText(TreeModel model, Object object, String indent) {
+        String myRow = "(" + indent + object;
+        for (int i = 0; i < model.getChildCount(object); i++) {
+            myRow = myRow + getTreeText(model, model.getChild(object, i), indent);
+        }
+        myRow += ")";
+        return myRow;
+    }
+    
     private void showAllTree()
     {
         //expand all node

@@ -48,7 +48,6 @@ public class NLPTaskPanel extends javax.swing.JPanel {
         taskTable.setModel(tableModel);
         ListSelectionModel selectionModel = taskTable.getSelectionModel();
         selectionModel.addListSelectionListener(new ListSelectionListener() {
-
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 String strSource= e.getSource().toString();
@@ -58,9 +57,12 @@ public class NLPTaskPanel extends javax.swing.JPanel {
                 int start = strSource.indexOf("{")+1,
                 stop  = strSource.length()-1;
                 int sel = Integer.parseInt(strSource.substring(start, stop));
-                System.out.println(sel);
-                NLPEntry selectedEntry = tableModel.getNLPEntry(sel);
-                parentFrame.setWorkingEntry(selectedEntry);
+                if (!e.getValueIsAdjusting()) {
+                    System.out.println(sel);
+                     NLPEntry selectedEntry = tableModel.getNLPEntry(sel);
+                     parentFrame.setWorkingEntry(selectedEntry);
+                }
+                
             }
         });
     }
@@ -68,7 +70,7 @@ public class NLPTaskPanel extends javax.swing.JPanel {
     class TaskTableModel extends AbstractTableModel {
         private List<NLPEntry> entries;
         private List<Boolean> selectList;
-        private String[] columnNames = { "Select","Status" , "Text" , "Add Date" , "Edit Date" ,"Tree", "Dependency" };
+        private final String[] columnNames = { "Select","Status" , "Text" , "Add Date" , "Edit Date" ,"Tree", "Dependency" };
         public void addTasks(List<NLPEntry> tasks) {
             if (entries == null) {
                 entries = new ArrayList<>();
@@ -78,26 +80,30 @@ public class NLPTaskPanel extends javax.swing.JPanel {
             }
             if (tasks != null) {
                 selectList = new ArrayList<>();
-                for (int i = 0; i < tasks.size(); i++) {
-                    entries.add(tasks.get(i));
+                for (NLPEntry task : tasks) {
+                    entries.add(task);
                     selectList.add(Boolean.TRUE);
                 }
             }
             fireTableStructureChanged(); 
             
         }
+        @Override
         public int getColumnCount() {
             return columnNames.length;
         }
+        @Override
         public int getRowCount() {
             return entries.size();
         }
+        @Override
         public String getColumnName(int col) {
             return columnNames[col];
         }
         public NLPEntry getNLPEntry(int row) {
             return entries.get(row);
         }
+        @Override
         public Object getValueAt (int row, int col)
         {
             String colName = getColumnName(col);
@@ -132,16 +138,15 @@ public class NLPTaskPanel extends javax.swing.JPanel {
             }
                     
         }
+        @Override
         public Class getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
+        @Override
         public boolean isCellEditable(int row,int col) {
-            if (getColumnName(col) ==  "Select") {
-                return true;
-            }
-            else
-                return false;
+            return "Select".equals(getColumnName(col));
         }
+        @Override
         public void setValueAt(Object value, int row, int col) {
             String colName = getColumnName(col);
             switch (colName) {
@@ -314,8 +319,8 @@ public class NLPTaskPanel extends javax.swing.JPanel {
             }
         }
         int bias = 0; //row number will change when delete
-        for (int i = 0; i < selectedRows.size(); i++) {
-            tableModel.removeRow(selectedRows.get(i) - bias);
+        for (Integer selectedRow : selectedRows) {
+            tableModel.removeRow(selectedRow - bias);
             bias++;
         }
     }//GEN-LAST:event_btnDeleteActionPerformed

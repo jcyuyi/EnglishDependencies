@@ -21,6 +21,7 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
         taskPanel.setParentFrame(this);
+        nLPTreeEditPanel1.setParentFrame(this);
     }
     private List<NLPEntry> entries;
     private NLPEntry workingEntry;

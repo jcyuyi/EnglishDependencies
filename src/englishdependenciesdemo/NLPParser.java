@@ -27,7 +27,7 @@ import java.util.List;
  * @author airjcy
  */
 public class NLPParser {
-    private String raw;
+    private final String raw;
     private List<CoreLabel> rawWords;
     private Tree parseTree;
     private List<TypedDependency> dependencys;
