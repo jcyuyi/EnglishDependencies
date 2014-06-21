@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * English Dependencies Demo Project
+ * Author: jcyuyi@gmail.com
  */
 
 package englishdependenciesdemo;
@@ -9,6 +8,8 @@ package englishdependenciesdemo;
 import edu.stanford.nlp.ling.StringLabelFactory;
 import edu.stanford.nlp.trees.*;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.tree.*;
+
 /**
  *
  * @author airjcy
@@ -33,23 +35,76 @@ public class NLPTreeEditPanel extends javax.swing.JPanel {
     private JButton btnAddParent;
     private JButton btnDeleteNode;
     private JButton btnDiscardChanges;
+    private JButton btnApply;
     
-     /**
+    //======================= public methods ==============================
+     
+    /**
      * Creates new form DJTreeEditPanel
      */
-    public NLPTreeEditPanel(Tree aTree) {
-        initComponents();
-        nlpTree = aTree.deepCopy();
-        init();
+
+    public NLPTreeEditPanel() {
+         initComponents();
+         init();
+         setTreeString("");
+         
+    }
+    public void setTitle(String title)
+    {
+        JLabel titleLabel = new JLabel("Tree Edit: " + title);
+        add(BorderLayout.NORTH,titleLabel);
     }
     
+    public void setTreeString(String treeString) {
+        PennTreeReader tr = new PennTreeReader(new StringReader(treeString), new LabeledScoredTreeFactory(new StringLabelFactory()));
+        if (tr != null) {
+            try {
+                setTree(tr.readTree());
+            } catch (Exception e) {
+                System.err.println("Error init NLP tree");
+                setTree(null);
+            }
+
+        }
+    }
+    
+    public void setTree(Tree aTree)
+    {
+        nlpTree = aTree;
+        if (nlpTree == null) { //handle empty tree
+            rootNode = new DefaultMutableTreeNode("Empty Tree!");
+        }
+        else {
+            rootNode = new DefaultMutableTreeNode(nlpTree.label());
+        }
+        treeModel = new DefaultTreeModel(rootNode);
+        jTree.setModel(treeModel);
+        //init all JTree node from Tree
+        if (nlpTree != null) {
+            addChildrenToNode(rootNode, nlpTree);
+            btnAddParent.setEnabled(true);
+            btnApply.setEnabled(true);
+            btnDeleteNode.setEnabled(true);
+            btnDiscardChanges.setEnabled(true);
+        }
+        else {
+            btnAddParent.setEnabled(false);
+            btnApply.setEnabled(false);
+            btnDeleteNode.setEnabled(false);
+            btnDiscardChanges.setEnabled(false);
+        }
+        showAllTree();
+    }
+    
+    //======================= private methods ==============================
     private void init() {
+        //init head
+        setTitle("");
+        
         //init tree root
-        rootNode = new DefaultMutableTreeNode(nlpTree.label());
+        rootNode = new DefaultMutableTreeNode();
         treeModel = new DefaultTreeModel(rootNode);
         jTree = new JTree(treeModel);
-        //init all JTree node from Tree
-        addChildrenToNode(rootNode, nlpTree);
         
         jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         jTree.setShowsRootHandles(true);
@@ -73,7 +128,7 @@ public class NLPTreeEditPanel extends javax.swing.JPanel {
         
         //set controllPanel to Edit JTree
         JPanel controllPanel = new JPanel();
-        controllPanel.setLayout(new GridLayout(1,4)); // 1 * 3 button: [Add parent...] [Delete parent] [Discard Changes]
+        controllPanel.setLayout(new GridLayout(1,4)); // 1 * 4 button: [Add parent...] [Delete parent] [Discard Changes] [Apply]
         cbParent = new JComboBox(NLPSettings.getGramms().toArray());
         
         
@@ -95,11 +150,18 @@ public class NLPTreeEditPanel extends javax.swing.JPanel {
                 btnDiscardChangesActionPerformed(evt);
             }
         });
+        
+        btnApply = new JButton("Apply");
+        btnApply.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                btnApplyActionPerformed(evt);
+            }
+        });
         controllPanel.add(cbParent);
         controllPanel.add(btnAddParent);
         controllPanel.add(btnDeleteNode);
         controllPanel.add(btnDiscardChanges);
-        
+        controllPanel.add(btnApply);
         add(BorderLayout.SOUTH,controllPanel);
     }
     
@@ -111,8 +173,6 @@ public class NLPTreeEditPanel extends javax.swing.JPanel {
             addChildrenToNode(newNode, aTree.children()[i]);
         }
     }
-
-
     
     private void btnAddParentActionPerformed(ActionEvent evt) {
         DefaultMutableTreeNode currentNode = null;
@@ -181,10 +241,14 @@ public class NLPTreeEditPanel extends javax.swing.JPanel {
         addChildrenToNode(rootNode, nlpTree);
         showAllTree();
      }
-    
+     
+     private void btnApplyActionPerformed(ActionEvent evt) {
+         //Gen tree String 
+     }
+     
     private void showAllTree()
     {
-                //expand all node
+        //expand all node
         for (int i = 0; i < jTree.getRowCount(); i++) {
          jTree.expandRow(i);
         }
@@ -195,7 +259,8 @@ public class NLPTreeEditPanel extends javax.swing.JPanel {
     public static void main(String[] args) throws IOException {
         String ptbTreeString = "(ROOT (S (NP (NNP Interactive_Tregex)) (VP (VBZ works)) (PP (IN for) (PRP me)) (. !))))";
         Tree tree = (new PennTreeReader(new StringReader(ptbTreeString), new LabeledScoredTreeFactory(new StringLabelFactory()))).readTree();
-        NLPTreeEditPanel nlpTreeEditPanel = new NLPTreeEditPanel(tree);
+        NLPTreeEditPanel nlpTreeEditPanel = new NLPTreeEditPanel();
+        nlpTreeEditPanel.setTree(tree);
         JFrame frame = new JFrame();
         frame.getContentPane().add(nlpTreeEditPanel, BorderLayout.CENTER);
         nlpTreeEditPanel.setVisible(true);

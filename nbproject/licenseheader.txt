@@ -1,0 +1,8 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}English Dependencies Demo Project
+${licensePrefix}Author: jcyuyi@gmail.com
+<#if licenseLast??>
+${licenseLast}
+</#if>
