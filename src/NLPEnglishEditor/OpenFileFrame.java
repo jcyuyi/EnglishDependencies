@@ -3,30 +3,20 @@
  * Author: jcyuyi@gmail.com
  */
 
-package englishdependenciesdemo;
+package NLPEnglishEditor;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.BreakIterator;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-/**
- *
- * @author airjcy
- */
 public class OpenFileFrame extends javax.swing.JFrame {
     private MainFrame parentFrame;
     private DefaultListModel<String> listModel;
@@ -51,8 +41,7 @@ public class OpenFileFrame extends javax.swing.JFrame {
             entries.add(NLPEntry.getRawEntryFromString(s));
         }
         return entries;
-    }
-    
+    }   
 
     private void addTasksFromList(List<String> list) {
         for (int i = 0; i < list.size(); i++) {
@@ -68,8 +57,7 @@ public class OpenFileFrame extends javax.swing.JFrame {
                 if (!listModel.contains(sentence)) { //sentence should be unique
                     listModel.addElement(sentence);
                 }
-            }
-            
+            } 
         }
     }
     
@@ -153,12 +141,11 @@ public class OpenFileFrame extends javax.swing.JFrame {
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
         final JFileChooser fc = new JFileChooser();
         fc.setFileFilter(new FileFilter() {
-
             @Override
             public boolean accept(File f) {
                 String fileName = f.getName();
                 if (f.isFile()) {
-                    return fileName.endsWith(".txt");
+                    return fileName.toLowerCase().endsWith(".txt");
                 }
                 else
                     return false;
@@ -169,6 +156,7 @@ public class OpenFileFrame extends javax.swing.JFrame {
                 return "Text files(.txt)";
             }
         });
+        
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
@@ -195,20 +183,6 @@ public class OpenFileFrame extends javax.swing.JFrame {
         }
         this.dispose();
     }//GEN-LAST:event_btnConfirmActionPerformed
-
-    /** 
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new OpenFileFrame().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConfirm;

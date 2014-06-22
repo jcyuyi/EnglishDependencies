@@ -1,0 +1,6 @@
+root
+det
+prepc
+pobj
+amod
+aux

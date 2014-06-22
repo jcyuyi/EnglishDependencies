@@ -2,8 +2,7 @@
  * English Dependencies Demo Project
  * Author: jcyuyi@gmail.com
  */
-
-package englishdependenciesdemo;
+package NLPEnglishEditor;
 
 import edu.stanford.nlp.ling.StringLabelFactory;
 import edu.stanford.nlp.parser.ui.TreeJPanel;
@@ -15,10 +14,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import javax.swing.JLabel;
 
-/**
- *
- * @author airjcy
- */
 public class NLPTreePanel extends javax.swing.JPanel {
 
     /**
@@ -26,28 +21,28 @@ public class NLPTreePanel extends javax.swing.JPanel {
      */
     private String treeString;
     private TreeJPanel treeJPanel;
+
     public NLPTreePanel() {
         initComponents();
-        add(BorderLayout.NORTH,new JLabel("Tree View:"));
-         treeJPanel = new TreeJPanel();
-         this.add(BorderLayout.CENTER,treeJPanel);
+        add(BorderLayout.NORTH, new JLabel("Tree View:"));
+        treeJPanel = new TreeJPanel();
+        this.add(BorderLayout.CENTER, treeJPanel);
         setTreeString(treeString);
     }
-    public void setTreeString(String aTreeString)
-    {
+
+    public void setTreeString(String aTreeString) {
         try {
             treeString = aTreeString;
             Tree tree = (new PennTreeReader(new StringReader(treeString), new LabeledScoredTreeFactory(new StringLabelFactory()))).readTree();
-            treeJPanel.setTree(tree);   
+            treeJPanel.setTree(tree);
             System.out.println("Set tree: " + aTreeString);
             repaint();
         } catch (Exception e) {
-            System.err.println("Error to set tree string : " + e.getMessage());
+            System.err.println("Fail to set tree string : " + e.getMessage());
             return;
         }
-        
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

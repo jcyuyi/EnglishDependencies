@@ -1,8 +1,6 @@
-package englishdependenciesdemo;
+package NLPEnglishEditor;
 
-import java.awt.*;
 import java.awt.datatransfer.*;
-import java.awt.dnd.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;

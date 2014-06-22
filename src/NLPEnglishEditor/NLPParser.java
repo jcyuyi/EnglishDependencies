@@ -3,7 +3,7 @@
  * Author: jcyuyi@gmail.com
  */
 
-package englishdependenciesdemo;
+package NLPEnglishEditor;
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
@@ -11,20 +11,13 @@ import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.process.TokenizerFactory;
 import edu.stanford.nlp.trees.GrammaticalStructure;
-import edu.stanford.nlp.trees.GrammaticalStructureFactory;
-import edu.stanford.nlp.trees.PennTreebankLanguagePack;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreePrint;
-import edu.stanford.nlp.trees.TreebankLanguagePack;
-import edu.stanford.nlp.trees.TypedDependency;
-import java.io.PrintWriter;
+import edu.stanford.nlp.trees.*;
 import java.io.StringReader;
-import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author airjcy
+ * Parse raw string to NLP represent format
  */
 public class NLPParser {
     private final String raw;
@@ -43,7 +36,17 @@ public class NLPParser {
             rawWords = tokenizerFactory.getTokenizer(new StringReader(raw)).tokenize();
             System.out.println("raw words: \n" + rawWords);
         }
+
         return rawWords;
+    }
+    
+    public List<String> getRawStringWords() {
+        List<CoreLabel> raw = getRawWords();
+        List<String> r = new ArrayList<String>();
+        for (int i = 0; i < raw.size(); i++) {
+            r.add(raw.get(i).toString() + "-" + String.valueOf(i+1));
+        }
+        return r;
     }
     
     public Tree getTree() 
@@ -69,5 +72,19 @@ public class NLPParser {
             dependencys = gs.typedDependenciesCCprocessed();
         }
         return dependencys;
+    }
+    
+    public List<NLPDependency> getDependencyList() {
+        List<NLPDependency> dependency = new ArrayList<>();
+        List<TypedDependency> dep = getTypedDependencyList();
+        for (int i = 0; i < dep.size(); i++) {
+            NLPDependency d = new NLPDependency();
+            TypedDependency td = dep.get(i);
+            d.setDep(td.dep().label().toString());
+            d.setGov(td.gov().label().toString());
+            d.setReln(td.reln().getShortName());
+            dependency.add(d);
+        }
+        return dependency;
     }
 }
